@@ -1,86 +1,108 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Персональная открытка от "Транзита"</title>
+    <title>Поздравление от Транзита</title>
+    <meta charset="utf-8">
     <style>
-        body { font-family: Arial, sans-serif; text-align: center; background-color: #f0f0f0; }
-        .container { max-width: 600px; margin: 50px auto; padding: 20px; background: white; border-radius: 10px; }
-        input, button { padding: 10px; margin: 10px; font-size: 16px; }
-        #poster-container { margin-top: 20px; display: none; } /* Сначала скрываем открытку */
-        #name-poster {
-            width: 100%;
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: white;
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .container {
+            background: rgba(255,255,255,0.1);
+            padding: 40px;
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
             max-width: 500px;
-            border: 2px solid #ccc;
-            border-radius: 5px;
+            width: 90%;
+        }
+        h1 {
+            color: #FFD700;
+            margin-bottom: 20px;
+        }
+        input {
+            padding: 12px;
+            font-size: 16px;
+            border: none;
+            border-radius: 8px;
+            width: 200px;
+            margin: 10px;
+        }
+        button {
+            padding: 12px 24px;
+            font-size: 16px;
+            background: #FFD700;
+            color: #1e3c72;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            margin: 10px;
+        }
+        button:hover {
+            background: #ffed4e;
+        }
+        #poster {
+            display: none;
+            margin: 20px auto;
+            padding: 30px;
+            background: white;
+            color: #333;
+            border-radius: 10px;
+            max-width: 400px;
+        }
+        .success {
+            font-size: 24px;
+            font-weight: bold;
+            color: #1e3c72;
+            margin: 20px 0;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>С Днём автомобилиста!</h1>
-        <p>Введи своё имя и получи персональную открытку от команды "Транзит".</p>
+        <h1>🚛 С Днём автомобилиста! 🎉</h1>
+        <p>Компания "Транзит" поздравляет вас с профессиональным праздником!</p>
         
-        <input type="text" id="userName" placeholder="Твоё имя">
-        <button onclick="generatePoster()">Создать открытку!</button>
+        <div>
+            <input type="text" id="nameInput" placeholder="Введите ваше имя">
+            <button onclick="createCard()">Создать открытку</button>
+        </div>
         
-        <div id="poster-container">
-            <p>Вот твоя открытка! Нажми и удерживай, чтобы сохранить на телефон.</p>
-            <!-- Холст для отрисовки открытки -->
-            <canvas id="name-poster" width="1000" height="1400"></canvas>
-            <br>
-            <button onclick="sharePoster()">Поделиться в Telegram</button>
+        <div id="poster">
+            <div class="success" id="userName"></div>
+            <p>Спасибо за ваш труд и преданность делу!</p>
+            <p>Команда "Транзит" гордится вами! 💪</p>
+            <button onclick="shareCard()">📤 Поделиться в Telegram</button>
         </div>
     </div>
 
     <script>
-        function generatePoster() {
-            const userName = document.getElementById('userName').value.trim();
-            if (!userName) {
-                alert('Введи своё имя!');
+        function createCard() {
+            const name = document.getElementById('nameInput').value.trim();
+            if (!name) {
+                alert('Пожалуйста, введите ваше имя!');
                 return;
             }
-
-            const canvas = document.getElementById('name-poster');
-            const ctx = canvas.getContext('2d');
-
-            // 1. Очищаем холст
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-            // 2. Загружаем и рисуем фоновое изображение (ваш шаблон)
-            const background = new Image();
-            background.src = 'template-poster.jpg'; // Укажите путь к вашему шаблону
-            background.onload = function() {
-                // Рисуем фон
-                ctx.drawImage(background, 0, 0, canvas.width, canvas.height);
-
-                // 3. Настраиваем стиль текста для имени
-                ctx.font = 'bold 80px Arial';
-                ctx.fillStyle = '#2c3e50'; // Цвет текста
-                ctx.textAlign = 'center';
-                
-                // 4. Вписываем имя сотрудника (координаты подбираются экспериментально)
-                ctx.fillText(userName.toUpperCase(), canvas.width / 2, 900); 
-
-                // 5. Показываем контейнер с открыткой
-                document.getElementById('poster-container').style.display = 'block';
-            };
+            
+            document.getElementById('userName').textContent = name + '!';
+            document.getElementById('poster').style.display = 'block';
         }
 
-        function sharePoster() {
-            const canvas = document.getElementById('name-poster');
-            // Конвертируем Canvas в изображение
-            canvas.toBlob(function(blob) {
-                // Создаем временную ссылку для скачивания
-                const link = document.createElement('a');
-                link.download = 'my_transit_poster.png';
-                link.href = URL.createObjectURL(blob);
-                link.click();
-            });
-
-            // Ссылка для шаринга в Telegram
-            const userName = document.getElementById('userName').value.trim();
-            const shareText = `С Днём автомобилиста! Посмотрите мою персональную открытку от компании "Транзит"!`;
-            const telegramUrl = `https://t.me/share/url?url=${encodeURIComponent(window.location.href)}&text=${encodeURIComponent(shareText)}`;
+        function shareCard() {
+            const name = document.getElementById('nameInput').value.trim();
+            const text = `С Днём автомобилиста! ${name}, компания "Транзит" поздравляет тебя с праздником! 🚛💨`;
+            const url = window.location.href;
+            
+            const telegramUrl = `https://t.me/share/url?url=${encodeURIComponent(url)}&text=${encodeURIComponent(text)}`;
             window.open(telegramUrl, '_blank');
         }
     </script>
