@@ -168,6 +168,11 @@
         .fade-in {
             animation: fadeIn 0.8s ease-out;
         }
+
+        /* Запасной фон если изображения не загрузились */
+        .fallback-background {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
     </style>
 </head>
 <body>
@@ -181,7 +186,7 @@
         </div>
         
         <div id="poster" class="fade-in">
-            <div class="poster-background" id="posterBackground"></div>
+            <div class="poster-background fallback-background" id="posterBackground"></div>
             <div class="poster-content">
                 <div class="text-plate">
                     <div class="poster-title">С Днём работника автомобильного транспорта!</div>
@@ -196,7 +201,7 @@
                     <div class="poster-text">
                         Желаем ровных дорог, зелёного света и попутного ветра!
                     </div>
-                    <div class="company-name">С уважением, команда ТРАНЗИТ </div>
+                    <div class="company-name">С уважением, команда ТРАНЗИТ</div>
                 </div>
                 
                 <button class="share-btn" onclick="shareCard()">📤 Поделиться в Telegram</button>
@@ -205,10 +210,10 @@
     </div>
 
     <script>
-        // Массив с фонами для открыток (используем красивые бесплатные изображения)
+        // Массив с фонами для открыток
         const posterBackgrounds = [
-            'images/background1.jpg',
-            'images/background2.jpg',
+            'background1.jpg',
+            'background2.jpg'
         ];
 
         function getRandomBackground() {
@@ -225,13 +230,30 @@
             
             // Устанавливаем случайный фон
             const randomBackground = getRandomBackground();
-            document.getElementById('posterBackground').style.backgroundImage = `url('${randomBackground}')`;
+            const posterBg = document.getElementById('posterBackground');
+            posterBg.style.backgroundImage = `url('${randomBackground}')`;
+            
+            // Проверяем загрузку изображения
+            const img = new Image();
+            img.onload = function() {
+                posterBg.style.backgroundImage = `url('${randomBackground}')`;
+            }
+            img.onerror = function() {
+                console.log('Ошибка загрузки фона:', randomBackground);
+                posterBg.classList.add('fallback-background');
+            }
+            img.src = randomBackground;
             
             // Показываем имя
             document.getElementById('displayUserName').textContent = name + '!';
             
             // Показываем открытку
             document.getElementById('poster').style.display = 'block';
+            
+            // Сохраняем имя в URL
+            const url = new URL(window.location);
+            url.searchParams.set('name', encodeURIComponent(name));
+            window.history.replaceState({}, '', url);
             
             // Прокручиваем к открытке
             document.getElementById('poster').scrollIntoView({ 
@@ -241,20 +263,34 @@
 
         function shareCard() {
             const name = document.getElementById('nameInput').value.trim();
-            const text = `С Днём работника автомобильного транспорта! ${name}, компания ТРАНЗИТ поздравляет тебя с профессиональным праздником! 🚛 Посмотри мою персональную открытку:`;
-            const url = window.location.href;
+            const currentUrl = window.location.href;
             
-            const telegramUrl = `https://t.me/share/url?url=${encodeURIComponent(url)}&text=${encodeURIComponent(text)}`;
+            const text = `С Днём работника автомобильного транспорта! ${name}, компания ТРАНЗИТ поздравляет тебя с профессиональным праздником! 🚛 Посмотри мою персональную открытку:`;
+            
+            const telegramUrl = `https://t.me/share/url?url=${encodeURIComponent(currentUrl)}&text=${encodeURIComponent(text)}`;
             window.open(telegramUrl, '_blank');
         }
-        
+
+        // При загрузке страницы проверяем параметр name в URL
+        function checkUrlParams() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const nameFromUrl = urlParams.get('name');
+            
+            if (nameFromUrl) {
+                const decodedName = decodeURIComponent(nameFromUrl);
+                document.getElementById('nameInput').value = decodedName;
+                createCard();
+            }
+        }
+
         document.getElementById('nameInput').addEventListener('keypress', function(e) {
             if (e.key === 'Enter') {
                 createCard();
             }
         });
+
+        // Проверяем параметры при загрузке страницы
+        window.addEventListener('load', checkUrlParams);
     </script>
 </body>
 </html>
-
-
