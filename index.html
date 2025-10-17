@@ -1,35 +1,35 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Поздравление от команды ТРАНЗИТ</title>
+    <title>Поздравление от ТРАНЗИТ</title>
     <meta charset="utf-8">
     <style>
-       body {
-    font-family: 'Arial', sans-serif;
-    text-align: center;
-    margin: 0;
-    padding: 20px;
-    min-height: 100vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background-image: url('background.jpg');
-    background-size: cover;
-    background-position: center;
-    background-attachment: fixed;
-    background-color: #1e3c72;
+        body {
+            font-family: 'Arial', sans-serif;
+            text-align: center;
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            /* Фирменный градиент */
+            background: linear-gradient(135deg, #cecece 0%, #004774 100%);
+            background-attachment: fixed;
+        }
+        
         .container {
-            background: rgba(255,255,255,0.95);
+            background: rgba(255, 255, 255, 0.92);
             padding: 40px 30px;
             border-radius: 20px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
             max-width: 500px;
             width: 90%;
             margin: 20px;
         }
         
         h1 {
-            color: #1e3c72;
+            color: #004774;
             margin-bottom: 10px;
             font-size: 28px;
         }
@@ -43,17 +43,18 @@
         input {
             padding: 15px;
             font-size: 18px;
-            border: 2px solid #1e3c72;
+            border: 2px solid #004774;
             border-radius: 10px;
             width: 250px;
             margin: 10px;
             text-align: center;
+            background: rgba(255, 255, 255, 0.9);
         }
         
         button {
             padding: 15px 30px;
             font-size: 18px;
-            background: #1e3c72;
+            background: #004774;
             color: white;
             border: none;
             border-radius: 10px;
@@ -64,52 +65,82 @@
         }
         
         button:hover {
-            background: #2a5298;
+            background: #0066a0;
         }
         
         /* Стили для открытки */
         #poster {
             display: none;
             margin: 30px auto;
-            padding: 40px 30px;
-            background: linear-gradient(45deg, #1e3c72, #2a5298);
-            color: white;
             border-radius: 15px;
             max-width: 400px;
-            box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
             position: relative;
-            border: 3px solid gold;
+            overflow: hidden;
+            min-height: 500px;
+        }
+        
+        .poster-background {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-size: cover;
+            background-position: center;
+            z-index: 1;
+        }
+        
+        .poster-content {
+            position: relative;
+            z-index: 2;
+            padding: 40px 30px;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .text-plate {
+            background: rgba(255, 255, 255, 0.85);
+            padding: 25px;
+            border-radius: 12px;
+            margin: 10px 0;
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
         }
         
         .poster-title {
             font-size: 24px;
             font-weight: bold;
             margin-bottom: 10px;
-            color: #FFD700;
+            color: #004774;
         }
         
         .user-name {
             font-size: 32px;
             font-weight: bold;
-            margin: 25px 0;
-            color: white;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
-            padding: 10px;
-            background: rgba(255,255,255,0.1);
+            margin: 20px 0;
+            color: #004774;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.9);
             border-radius: 8px;
+            border: 2px solid #004774;
         }
         
         .poster-text {
-            font-size: 18px;
+            font-size: 16px;
             line-height: 1.5;
-            margin: 15px 0;
+            margin: 12px 0;
+            color: #333;
         }
         
         .company-name {
-            font-size: 20px;
+            font-size: 18px;
             font-weight: bold;
             margin-top: 20px;
-            color: #FFD700;
+            color: #004774;
         }
         
         .truck-emoji {
@@ -118,19 +149,30 @@
         }
         
         .share-btn {
-            background: #FFD700;
-            color: #1e3c72;
-            margin-top: 20px;
+            background: #004774;
+            color: white;
+            margin-top: 25px;
+            padding: 12px 25px;
         }
         
         .share-btn:hover {
-            background: #ffed4e;
+            background: #0066a0;
+        }
+        
+        /* Анимация появления */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .fade-in {
+            animation: fadeIn 0.8s ease-out;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>🚛 С Днём работника автомобильного транспорта! 🎉</h1>
+        <h1> С Днём работника автомобильного транспорта! 🎉</h1>
         <p class="subtitle">Компания "ТРАНЗИТ" поздравляет вас с профессиональным праздником!</p>
         
         <div>
@@ -138,22 +180,42 @@
             <button onclick="createCard()">Создать открытку</button>
         </div>
         
-        <div id="poster">
-            <div class="poster-title">С Днём автомобилиста!</div>
-            <div class="truck-emoji">🚛 💨</div>
-            <div class="user-name" id="displayUserName"></div>
-            <div class="poster-text">
-                Ваш профессионализм — залог нашего общего успеха!
+        <div id="poster" class="fade-in">
+            <div class="poster-background" id="posterBackground"></div>
+            <div class="poster-content">
+                <div class="text-plate">
+                    <div class="poster-title">С Днём работника автомобильного транспорта!</div>
+                </div>
+                
+                <div class="user-name" id="displayUserName"></div>
+                
+                <div class="text-plate">
+                    <div class="poster-text">
+                        Ваш профессионализм и преданность делу — залог нашего общего успеха! Спасибо вам за каждый километр, пройденный в любую погоду, за терпение на постах и точность в графиках.
+                    </div>
+                    <div class="poster-text">
+                        Желаем ровных дорог, зелёного света и попутного ветра!
+                    </div>
+                    <div class="company-name">С уважением, команда "ТРАНЗИТ"</div>
+                </div>
+                
+                <button class="share-btn" onclick="shareCard()">📤 Поделиться в Telegram</button>
             </div>
-            <div class="poster-text">
-                Желаем ровных дорог, зелёного света и попутного ветра!
-            </div>
-            <div class="company-name">С уважением, команда "ТРАНЗИТ"</div>
-            <button class="share-btn" onclick="shareCard()">📤 Поделиться в Telegram</button>
         </div>
     </div>
 
     <script>
+        // Массив с фонами для открыток 
+        const posterBackgrounds = [
+        //     'background1.jpg',
+        //     'background2.jpg'
+        // ];
+
+        function getRandomBackground() {
+            const randomIndex = Math.floor(Math.random() * posterBackgrounds.length);
+            return posterBackgrounds[randomIndex];
+        }
+
         function createCard() {
             const name = document.getElementById('nameInput').value.trim();
             if (!name) {
@@ -161,10 +223,14 @@
                 return;
             }
             
-            // Показываем имя в открытке - ЭТО ОСНОВНОЙ МОМЕНТ!
+            // Устанавливаем случайный фон
+            const randomBackground = getRandomBackground();
+            document.getElementById('posterBackground').style.backgroundImage = `url('${randomBackground}')`;
+            
+            // Показываем имя
             document.getElementById('displayUserName').textContent = name + '!';
             
-            // Показываем контейнер с открыткой
+            // Показываем открытку
             document.getElementById('poster').style.display = 'block';
             
             // Прокручиваем к открытке
@@ -175,14 +241,13 @@
 
         function shareCard() {
             const name = document.getElementById('nameInput').value.trim();
-            const text = `С Днём автомобилиста! ${name}, компания "ТРАНЗИТ" поздравляет тебя с профессиональным праздником! 🚛💨 Посмотри мою персональную открытку:`;
+            const text = `С Днём работника автомобильного транспорта! ${name}, компания "ТРАНЗИТ" поздравляет тебя с профессиональным праздником! 🚛 Посмотри мою персональную открытку:`;
             const url = window.location.href;
             
             const telegramUrl = `https://t.me/share/url?url=${encodeURIComponent(url)}&text=${encodeURIComponent(text)}`;
             window.open(telegramUrl, '_blank');
         }
         
-        // Добавляем возможность нажимать Enter в поле ввода
         document.getElementById('nameInput').addEventListener('keypress', function(e) {
             if (e.key === 'Enter') {
                 createCard();
@@ -191,5 +256,4 @@
     </script>
 </body>
 </html>
-
 
