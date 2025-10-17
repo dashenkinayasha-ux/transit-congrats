@@ -61,7 +61,7 @@
             cursor: pointer;
             font-weight: bold;
             margin: 10px;
-            transition: background 0.3s;
+            transition: all 0.3s;
         }
         
         button:hover {
@@ -151,36 +151,86 @@
         
         .share-buttons {
             display: flex;
-            gap: 15px;
-            justify-content: center;
+            flex-direction: column;
+            align-items: center;
             margin-top: 30px;
-            flex-wrap: wrap;
+            gap: 10px;
         }
         
-        .share-btn {
+        .share-main-btn {
             background: #004774;
             color: white;
-            padding: 12px 25px;
+            padding: 15px 40px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 18px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: all 0.3s;
+            font-weight: bold;
+        }
+        
+        .share-main-btn:hover {
+            background: #0066a0;
+            transform: translateY(-2px);
+        }
+        
+        .share-options {
+            display: none;
+            gap: 15px;
+            margin-top: 15px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        
+        .share-options.show {
+            display: flex;
+            animation: fadeIn 0.3s ease-out;
+        }
+        
+        .platform-btn {
+            padding: 12px 20px;
             border: none;
             border-radius: 8px;
             cursor: pointer;
-            font-size: 16px;
+            font-size: 14px;
             display: flex;
             align-items: center;
             gap: 8px;
-            transition: background 0.3s;
+            transition: all 0.3s;
+            font-weight: bold;
         }
         
-        .share-btn:hover {
-            background: #0066a0;
+        .telegram-btn {
+            background: #0088cc;
+            color: white;
+        }
+        
+        .telegram-btn:hover {
+            background: #0077b3;
+            transform: translateY(-1px);
         }
         
         .whatsapp-btn {
             background: #25D366;
+            color: white;
         }
         
         .whatsapp-btn:hover {
             background: #1da851;
+            transform: translateY(-1px);
+        }
+        
+        .other-btn {
+            background: #666;
+            color: white;
+        }
+        
+        .other-btn:hover {
+            background: #555;
+            transform: translateY(-1px);
         }
         
         /* Скрываем форму создания когда показывается открытка */
@@ -203,7 +253,7 @@
         
         /* Анимация появления */
         @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
+            from { opacity: 0; transform: translateY(-10px); }
             to { opacity: 1; transform: translateY(0); }
         }
         
@@ -221,7 +271,7 @@
     <div class="container">
         <div class="creation-form">
             <h1>С Днём работника автомобильного транспорта! 🎉</h1>
-            <p class="subtitle">Компания ТРАНЗИТ поздравляет вас с профессиональным праздником! Создайте персональную открытку и отправьте коллеге </p>
+            <p class="subtitle">Компания ТРАНЗИТ поздравляет вас с профессиональным праздником!</p>
             
             <div>
                 <input type="text" id="nameInput" placeholder="Введите ваше имя">
@@ -249,12 +299,20 @@
                 </div>
                 
                 <div class="share-buttons">
-                    <button class="share-btn" onclick="shareCard('telegram')">
-                        📤 Поделиться в Telegram
+                    <button class="share-main-btn" onclick="toggleShareOptions()">
+                        📤 Поделиться
                     </button>
-                    <button class="share-btn whatsapp-btn" onclick="shareCard('whatsapp')">
-                        💚 Поделиться в WhatsApp
-                    </button>
+                    <div class="share-options" id="shareOptions">
+                        <button class="platform-btn telegram-btn" onclick="shareCard('telegram')">
+                            📱 Telegram
+                        </button>
+                        <button class="platform-btn whatsapp-btn" onclick="shareCard('whatsapp')">
+                            💚 WhatsApp
+                        </button>
+                        <button class="platform-btn other-btn" onclick="shareCard('other')">
+                            🌐 Другое
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -313,6 +371,11 @@
             });
         }
 
+        function toggleShareOptions() {
+            const shareOptions = document.getElementById('shareOptions');
+            shareOptions.classList.toggle('show');
+        }
+
         function shareCard(platform) {
             const name = document.getElementById('nameInput').value.trim();
             const currentUrl = window.location.href;
@@ -322,12 +385,40 @@
             
             if (platform === 'whatsapp') {
                 shareUrl = `https://wa.me/?text=${encodeURIComponent(text + ' ' + currentUrl)}`;
-            } else {
+            } else if (platform === 'telegram') {
                 shareUrl = `https://t.me/share/url?url=${encodeURIComponent(currentUrl)}&text=${encodeURIComponent(text)}`;
+            } else {
+                // Для других платформ используем Web Share API если доступно
+                if (navigator.share) {
+                    navigator.share({
+                        title: 'Поздравление от ТРАНЗИТ',
+                        text: text,
+                        url: currentUrl
+                    });
+                    return;
+                } else {
+                    // Fallback - копируем в буфер обмена
+                    navigator.clipboard.writeText(text + ' ' + currentUrl).then(function() {
+                        alert('Ссылка скопирована в буфер обмена!');
+                    });
+                    return;
+                }
             }
             
             window.open(shareUrl, '_blank');
         }
+
+        // Закрываем меню шаринга при клике вне его
+        document.addEventListener('click', function(event) {
+            const shareOptions = document.getElementById('shareOptions');
+            const shareMainBtn = document.querySelector('.share-main-btn');
+            
+            if (shareOptions.classList.contains('show') && 
+                !shareOptions.contains(event.target) && 
+                !shareMainBtn.contains(event.target)) {
+                shareOptions.classList.remove('show');
+            }
+        });
 
         // При загрузке страницы проверяем параметр name в URL
         function checkUrlParams() {
