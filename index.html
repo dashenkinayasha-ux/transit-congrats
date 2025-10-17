@@ -3,6 +3,7 @@
 <head>
     <title>Поздравление от ТРАНЗИТ</title>
     <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
         body {
             font-family: 'Arial', sans-serif;
@@ -13,7 +14,6 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            /* Фирменный градиент */
             background: linear-gradient(135deg, #cecece 0%, #004774 100%);
             background-attachment: fixed;
         }
@@ -23,7 +23,7 @@
             padding: 40px 30px;
             border-radius: 20px;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-            max-width: 500px;
+            max-width: 600px;
             width: 90%;
             margin: 20px;
         }
@@ -73,7 +73,8 @@
             display: none;
             margin: 30px auto;
             border-radius: 15px;
-            max-width: 400px;
+            max-width: 550px;
+            width: 100%;
             box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
             position: relative;
             overflow: hidden;
@@ -100,63 +101,104 @@
             flex-direction: column;
             justify-content: center;
             align-items: center;
-        }
-        
-        .text-plate {
-            background: rgba(255, 255, 255, 0.85);
-            padding: 25px;
-            border-radius: 12px;
-            margin: 10px 0;
-            backdrop-filter: blur(5px);
-            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: white;
         }
         
         .poster-title {
-            font-size: 24px;
+            font-size: 28px;
             font-weight: bold;
-            margin-bottom: 10px;
-            color: #004774;
+            margin-bottom: 30px;
+            text-align: center;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
+        
+        .text-plate {
+            background: rgba(255, 255, 255, 0.92);
+            padding: 30px;
+            border-radius: 15px;
+            margin: 10px 0;
+            width: 90%;
+            max-width: 480px;
         }
         
         .user-name {
-            font-size: 32px;
+            font-size: 36px;
             font-weight: bold;
-            margin: 20px 0;
+            margin: 25px 0;
             color: #004774;
-            padding: 15px;
-            background: rgba(255, 255, 255, 0.9);
-            border-radius: 8px;
-            border: 2px solid #004774;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 12px;
+            border: 3px solid #004774;
+            text-align: center;
         }
         
         .poster-text {
-            font-size: 16px;
-            line-height: 1.5;
-            margin: 12px 0;
+            font-size: 17px;
+            line-height: 1.6;
+            margin: 15px 0;
             color: #333;
+            text-align: center;
         }
         
         .company-name {
             font-size: 18px;
             font-weight: bold;
-            margin-top: 20px;
+            margin-top: 25px;
             color: #004774;
+            text-align: center;
         }
         
-        .truck-emoji {
-            font-size: 48px;
-            margin: 15px 0;
+        .share-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-top: 30px;
+            flex-wrap: wrap;
         }
         
         .share-btn {
             background: #004774;
             color: white;
-            margin-top: 25px;
             padding: 12px 25px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: background 0.3s;
         }
         
         .share-btn:hover {
             background: #0066a0;
+        }
+        
+        .whatsapp-btn {
+            background: #25D366;
+        }
+        
+        .whatsapp-btn:hover {
+            background: #1da851;
+        }
+        
+        /* Скрываем форму создания когда показывается открытка */
+        .creation-form {
+            display: block;
+        }
+        
+        .poster-mode .creation-form {
+            display: none;
+        }
+        
+        .poster-mode .container {
+            max-width: 800px;
+        }
+        
+        .poster-mode #poster {
+            max-width: 700px;
+            margin: 0 auto;
         }
         
         /* Анимация появления */
@@ -177,24 +219,26 @@
 </head>
 <body>
     <div class="container">
-        <h1>С Днём работника автомобильного транспорта! 🎉</h1>
-        <p class="subtitle">Компания ТРАНЗИТ поздравляет вас с профессиональным праздником!</p>
-        
-        <div>
-            <input type="text" id="nameInput" placeholder="Введите ваше имя">
-            <button onclick="createCard()">Создать открытку</button>
+        <div class="creation-form">
+            <h1>С Днём работника автомобильного транспорта! 🎉</h1>
+            <p class="subtitle">Компания ТРАНЗИТ поздравляет вас с профессиональным праздником! Создайте персональную открытку и отправьте коллеге </p>
+            
+            <div>
+                <input type="text" id="nameInput" placeholder="Введите ваше имя">
+                <button onclick="createCard()">Создать открытку</button>
+            </div>
         </div>
         
         <div id="poster" class="fade-in">
             <div class="poster-background fallback-background" id="posterBackground"></div>
             <div class="poster-content">
-                <div class="text-plate">
-                    <div class="poster-title">С Днём работника автомобильного транспорта!</div>
-                </div>
+                <!-- Заголовок БЕЗ белой плашки -->
+                <div class="poster-title">С Днём работника автомобильного транспорта!</div>
                 
-                <div class="user-name" id="displayUserName"></div>
-                
+                <!-- Основной блок с именем и текстом -->
                 <div class="text-plate">
+                    <div class="user-name" id="displayUserName"></div>
+                    
                     <div class="poster-text">
                         Ваш профессионализм и преданность делу — залог нашего общего успеха! Спасибо вам за каждый километр, пройденный в любую погоду, за терпение на постах и точность в графиках.
                     </div>
@@ -204,7 +248,14 @@
                     <div class="company-name">С уважением, команда ТРАНЗИТ</div>
                 </div>
                 
-                <button class="share-btn" onclick="shareCard()">📤 Поделиться в Telegram</button>
+                <div class="share-buttons">
+                    <button class="share-btn" onclick="shareCard('telegram')">
+                        📤 Поделиться в Telegram
+                    </button>
+                    <button class="share-btn whatsapp-btn" onclick="shareCard('whatsapp')">
+                        💚 Поделиться в WhatsApp
+                    </button>
+                </div>
             </div>
         </div>
     </div>
@@ -247,8 +298,9 @@
             // Показываем имя
             document.getElementById('displayUserName').textContent = name + '!';
             
-            // Показываем открытку
+            // Показываем открытку и скрываем форму создания
             document.getElementById('poster').style.display = 'block';
+            document.body.classList.add('poster-mode');
             
             // Сохраняем имя в URL
             const url = new URL(window.location);
@@ -261,14 +313,20 @@
             });
         }
 
-        function shareCard() {
+        function shareCard(platform) {
             const name = document.getElementById('nameInput').value.trim();
             const currentUrl = window.location.href;
-            
             const text = `С Днём работника автомобильного транспорта! ${name}, компания ТРАНЗИТ поздравляет тебя с профессиональным праздником! 🚛 Посмотри мою персональную открытку:`;
+
+            let shareUrl;
             
-            const telegramUrl = `https://t.me/share/url?url=${encodeURIComponent(currentUrl)}&text=${encodeURIComponent(text)}`;
-            window.open(telegramUrl, '_blank');
+            if (platform === 'whatsapp') {
+                shareUrl = `https://wa.me/?text=${encodeURIComponent(text + ' ' + currentUrl)}`;
+            } else {
+                shareUrl = `https://t.me/share/url?url=${encodeURIComponent(currentUrl)}&text=${encodeURIComponent(text)}`;
+            }
+            
+            window.open(shareUrl, '_blank');
         }
 
         // При загрузке страницы проверяем параметр name в URL
