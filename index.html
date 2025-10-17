@@ -66,6 +66,7 @@
         
         button:hover {
             background: #0066a0;
+            transform: translateY(-2px);
         }
         
         /* Стили для открытки */
@@ -149,15 +150,7 @@
             text-align: center;
         }
         
-        .share-buttons {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            margin-top: 30px;
-            gap: 10px;
-        }
-        
-        .share-main-btn {
+        .share-btn {
             background: #004774;
             color: white;
             padding: 15px 40px;
@@ -170,67 +163,12 @@
             gap: 10px;
             transition: all 0.3s;
             font-weight: bold;
+            margin-top: 25px;
         }
         
-        .share-main-btn:hover {
+        .share-btn:hover {
             background: #0066a0;
             transform: translateY(-2px);
-        }
-        
-        .share-options {
-            display: none;
-            gap: 15px;
-            margin-top: 15px;
-            flex-wrap: wrap;
-            justify-content: center;
-        }
-        
-        .share-options.show {
-            display: flex;
-            animation: fadeIn 0.3s ease-out;
-        }
-        
-        .platform-btn {
-            padding: 12px 20px;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 14px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            transition: all 0.3s;
-            font-weight: bold;
-        }
-        
-        .telegram-btn {
-            background: #0088cc;
-            color: white;
-        }
-        
-        .telegram-btn:hover {
-            background: #0077b3;
-            transform: translateY(-1px);
-        }
-        
-        .whatsapp-btn {
-            background: #25D366;
-            color: white;
-        }
-        
-        .whatsapp-btn:hover {
-            background: #1da851;
-            transform: translateY(-1px);
-        }
-        
-        .other-btn {
-            background: #666;
-            color: white;
-        }
-        
-        .other-btn:hover {
-            background: #555;
-            transform: translateY(-1px);
         }
         
         /* Скрываем форму создания когда показывается открытка */
@@ -253,12 +191,32 @@
         
         /* Анимация появления */
         @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(-10px); }
+            from { opacity: 0; transform: translateY(20px); }
             to { opacity: 1; transform: translateY(0); }
         }
         
         .fade-in {
             animation: fadeIn 0.8s ease-out;
+        }
+
+        /* Стили для уведомления */
+        .notification {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #25D366;
+            color: white;
+            padding: 15px 25px;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            z-index: 1000;
+            display: none;
+        }
+        
+        .notification.show {
+            display: block;
+            animation: fadeIn 0.3s ease-out;
         }
 
         /* Запасной фон если изображения не загрузились */
@@ -298,24 +256,16 @@
                     <div class="company-name">С уважением, команда ТРАНЗИТ</div>
                 </div>
                 
-                <div class="share-buttons">
-                    <button class="share-main-btn" onclick="toggleShareOptions()">
-                        📤 Поделиться
-                    </button>
-                    <div class="share-options" id="shareOptions">
-                        <button class="platform-btn telegram-btn" onclick="shareCard('telegram')">
-                            📱 Telegram
-                        </button>
-                        <button class="platform-btn whatsapp-btn" onclick="shareCard('whatsapp')">
-                            💚 WhatsApp
-                        </button>
-                        <button class="platform-btn other-btn" onclick="shareCard('other')">
-                            🌐 Другое
-                        </button>
-                    </div>
-                </div>
+                <button class="share-btn" onclick="shareCard()">
+                    📤 Поделиться
+                </button>
             </div>
         </div>
+    </div>
+
+    <!-- Уведомление о копировании -->
+    <div class="notification" id="notification">
+        Ссылка скопирована в буфер обмена! ✅
     </div>
 
     <script>
@@ -371,54 +321,49 @@
             });
         }
 
-        function toggleShareOptions() {
-            const shareOptions = document.getElementById('shareOptions');
-            shareOptions.classList.toggle('show');
+        function showNotification() {
+            const notification = document.getElementById('notification');
+            notification.classList.add('show');
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 3000);
         }
 
-        function shareCard(platform) {
+        function shareCard() {
             const name = document.getElementById('nameInput').value.trim();
             const currentUrl = window.location.href;
-            const text = `С Днём работника автомобильного транспорта! ${name}, компания ТРАНЗИТ поздравляет тебя с профессиональным праздником! 🚛 Посмотри мою персональную открытку:`;
+            const text = `С Днём работника автомобильного транспорта! ${name}, компания ТРАНЗИТ поздравляет тебя с профессиональным праздником! 🚛 Посмотри мою персональную открытку: ${currentUrl}`;
 
-            let shareUrl;
-            
-            if (platform === 'whatsapp') {
-                shareUrl = `https://wa.me/?text=${encodeURIComponent(text + ' ' + currentUrl)}`;
-            } else if (platform === 'telegram') {
-                shareUrl = `https://t.me/share/url?url=${encodeURIComponent(currentUrl)}&text=${encodeURIComponent(text)}`;
+            // Пробуем использовать системный шаринг (работает на мобильных и в современных браузерах)
+            if (navigator.share) {
+                navigator.share({
+                    title: 'Поздравление от ТРАНЗИТ',
+                    text: `С Днём работника автомобильного транспорта! ${name}, компания ТРАНЗИТ поздравляет тебя с профессиональным праздником! 🚛`,
+                    url: currentUrl
+                }).catch(() => {
+                    // Если пользователь отменил шаринг, копируем в буфер
+                    copyToClipboard(text);
+                });
             } else {
-                // Для других платформ используем Web Share API если доступно
-                if (navigator.share) {
-                    navigator.share({
-                        title: 'Поздравление от ТРАНЗИТ',
-                        text: text,
-                        url: currentUrl
-                    });
-                    return;
-                } else {
-                    // Fallback - копируем в буфер обмена
-                    navigator.clipboard.writeText(text + ' ' + currentUrl).then(function() {
-                        alert('Ссылка скопирована в буфер обмена!');
-                    });
-                    return;
-                }
+                // Fallback - копируем в буфер обмена
+                copyToClipboard(text);
             }
-            
-            window.open(shareUrl, '_blank');
         }
 
-        // Закрываем меню шаринга при клике вне его
-        document.addEventListener('click', function(event) {
-            const shareOptions = document.getElementById('shareOptions');
-            const shareMainBtn = document.querySelector('.share-main-btn');
-            
-            if (shareOptions.classList.contains('show') && 
-                !shareOptions.contains(event.target) && 
-                !shareMainBtn.contains(event.target)) {
-                shareOptions.classList.remove('show');
-            }
-        });
+        function copyToClipboard(text) {
+            navigator.clipboard.writeText(text).then(function() {
+                showNotification();
+            }).catch(function() {
+                // Fallback для старых браузеров
+                const textArea = document.createElement('textarea');
+                textArea.value = text;
+                document.body.appendChild(textArea);
+                textArea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textArea);
+                showNotification();
+            });
+        }
 
         // При загрузке страницы проверяем параметр name в URL
         function checkUrlParams() {
