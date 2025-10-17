@@ -171,6 +171,35 @@
             transform: translateY(-2px);
         }
         
+        .create-new-btn {
+            background: #25D366;
+            color: white;
+            padding: 12px 25px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s;
+            font-weight: bold;
+            margin-top: 15px;
+        }
+        
+        .create-new-btn:hover {
+            background: #1da851;
+            transform: translateY(-2px);
+        }
+        
+        .action-buttons {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+            margin-top: 25px;
+        }
+        
         /* Скрываем форму создания когда показывается открытка */
         .creation-form {
             display: block;
@@ -229,7 +258,7 @@
     <div class="container">
         <div class="creation-form">
             <h1>С Днём работника автомобильного транспорта! 🎉</h1>
-            <p class="subtitle">Компания ТРАНЗИТ поздравляет вас с профессиональным праздником!</p>
+            <p class="subtitle">Компания ТРАНЗИТ поздравляет вас с профессиональным праздником! Создайте пресональную открытку и отправь коллеге </p>
             
             <div>
                 <input type="text" id="nameInput" placeholder="Введите ваше имя">
@@ -256,9 +285,14 @@
                     <div class="company-name">С уважением, команда ТРАНЗИТ</div>
                 </div>
                 
-                <button class="share-btn" onclick="shareCard()">
-                    📤 Поделиться
-                </button>
+                <div class="action-buttons">
+                    <button class="share-btn" onclick="shareCard()">
+                        📤 Поделиться
+                    </button>
+                    <button class="create-new-btn" onclick="createNewCard()">
+                        ✨ Создать свою открытку
+                    </button>
+                </div>
             </div>
         </div>
     </div>
@@ -321,6 +355,26 @@
             });
         }
 
+        function createNewCard() {
+            // Очищаем URL параметры
+            const url = new URL(window.location);
+            url.searchParams.delete('name');
+            window.history.replaceState({}, '', url);
+            
+            // Скрываем открытку и показываем форму создания
+            document.getElementById('poster').style.display = 'none';
+            document.body.classList.remove('poster-mode');
+            
+            // Очищаем поле ввода
+            document.getElementById('nameInput').value = '';
+            
+            // Прокручиваем к форме создания
+            document.getElementById('nameInput').focus();
+            document.querySelector('.creation-form').scrollIntoView({ 
+                behavior: 'smooth' 
+            });
+        }
+
         function showNotification() {
             const notification = document.getElementById('notification');
             notification.classList.add('show');
@@ -330,23 +384,21 @@
         }
 
         function shareCard() {
-            const name = document.getElementById('nameInput').value.trim();
             const currentUrl = window.location.href;
-            const text = `С Днём работника автомобильного транспорта! ${name}, компания ТРАНЗИТ поздравляет тебя с профессиональным праздником! 🚛 Посмотри мою персональную открытку: ${currentUrl}`;
 
             // Пробуем использовать системный шаринг (работает на мобильных и в современных браузерах)
             if (navigator.share) {
                 navigator.share({
                     title: 'Поздравление от ТРАНЗИТ',
-                    text: `С Днём работника автомобильного транспорта! ${name}, компания ТРАНЗИТ поздравляет тебя с профессиональным праздником! 🚛`,
+                    text: 'Посмотри мою персональную открытку с поздравлением!',
                     url: currentUrl
                 }).catch(() => {
-                    // Если пользователь отменил шаринг, копируем в буфер
-                    copyToClipboard(text);
+                    // Если пользователь отменил шаринг, копируем только ссылку
+                    copyToClipboard(currentUrl);
                 });
             } else {
-                // Fallback - копируем в буфер обмена
-                copyToClipboard(text);
+                // Fallback - копируем только ссылку в буфер обмена
+                copyToClipboard(currentUrl);
             }
         }
 
